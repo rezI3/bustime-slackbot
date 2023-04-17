@@ -30,10 +30,10 @@ const doPost = () => {
   const channelId = "#bus-time";
 
   // メッセージの送信テスト
-  const message = "バスの時刻表に変化があったよ！\n" + scriptProperties.getProperty("PDF_URL")
+  const message = "<@U03PPK103SM>\nバスの時刻表に変化があったよ！\n" + scriptProperties.getProperty("PDF_URL")
   slackBot.chatPostMessage(channelId, message);
 
-  // pdfをdriveから取得して、slackbotから送信(うまくいかない)
+  // todo: pdfをdriveから?取得して、slackbotから送信したい
   // const pdf = DriveApp.getFilesByName("R5年度シャトルバス時刻表春学期_0410-0414.pdf");
   // slackBot.filesUpload(pdfBlob)
 }
