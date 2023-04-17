@@ -18,7 +18,7 @@ const checkBusTableUpdates = () => {
   console.log("バスの時刻表に変更がありました");
   console.log("SlackBotでURLを送信します");
 
-  // slackbotで送信する機能
+  // slackbotでpdfを送信する
   doPost();
 }
 
@@ -26,16 +26,28 @@ const doPost = () => {
   // slackbotのトークン
   const slack_token = scriptProperties.getProperty(botTokenKey);
   const slackBot = SlackApp.create(slack_token);
-
   const channelId = "#bus-time";
 
-  // メッセージの送信テスト
-  const message = "<@U03PPK103SM>\nバスの時刻表に変化があったよ！\n" + scriptProperties.getProperty("PDF_URL")
+  // メッセージの送信
+  const message = "<@U03PPK103SM>\nバスの時刻表に変化があったよ！\n";
   slackBot.chatPostMessage(channelId, message);
 
-  // todo: pdfをdriveから?取得して、slackbotから送信したい
-  // const pdf = DriveApp.getFilesByName("R5年度シャトルバス時刻表春学期_0410-0414.pdf");
-  // slackBot.filesUpload(pdfBlob)
+  // pdfを取得する
+  const pdfPath = scriptProperties.getProperty(pdfUrlKey)
+  const pdfBlob = UrlFetchApp.fetch(pdfPath).getBlob()
+
+  // ファイル名用の現在時刻を取得する
+  const date = getDateFileName();
+
+  // ファイル名とチャンネルの指定
+  const options = {
+    filename: date + ".pdf",
+    channels: channelId
+  }
+
+  // pdfファイルをアップロード
+  const result = slackBot.filesUpload(pdfBlob, options);
+  Logger.log(result)
 }
 
 
@@ -52,4 +64,14 @@ const fetchBusTimePdfUrl = () => {
   const url = "https://www.chitose.ac.jp" + path;
 
   return url;
+}
+
+const getDateFileName = () => {
+  const date = new Date().toLocaleDateString("ja-JP", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).split("/").join("-");
+
+  return date;
 }
