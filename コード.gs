@@ -1,6 +1,9 @@
 const scriptProperties = PropertiesService.getScriptProperties();
 const botTokenKey = "Bot_User_OAuth_Token";
 const pdfUrlKey = "PDF_URL";
+const accountIdKey = "ACCOUNT_ID"
+const channelId = "#bus-time";
+
 
 const checkBusTableUpdates = () => {
   const prevPdfUrl = scriptProperties.getProperty(pdfUrlKey); // 過去のURL
@@ -26,10 +29,12 @@ const doPost = () => {
   // slackbotのトークン
   const slack_token = scriptProperties.getProperty(botTokenKey);
   const slackBot = SlackApp.create(slack_token);
-  const channelId = "#bus-time";
+  
+  const accountId = scriptProperties.getProperty(accountIdKey)
+  const accountMention = "<" + accountId + ">"
 
   // メッセージの送信
-  const message = "<@U03PPK103SM>\nバスの時刻表に変化があったよ！\n";
+  const message = accountMention + "\n最新のバス時刻表だよ！！";
   slackBot.chatPostMessage(channelId, message);
 
   // pdfを取得する
